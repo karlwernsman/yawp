@@ -52,4 +52,39 @@ describe('restaurant routes', () => {
       ]
     `);
   });
+
+  it('GET api/v1/restaurants/:id should return the restaurant with nested reviews', async () => {
+    const res = await request(app).get('/api/v1/restaurants/1');
+    // expect(res.status).toBe(200);
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "cost": 1,
+        "cuisine": "American",
+        "id": "1",
+        "image": "https://media-cdn.tripadvisor.com/media/photo-o/05/dd/53/67/an-assortment-of-donuts.jpg",
+        "name": "Pip's Original",
+        "reviews": Array [
+          Object {
+            "detail": "Best restaurant ever!",
+            "id": "1",
+            "stars": 5,
+            "user_id": "1",
+          },
+          Object {
+            "detail": "Terrible service :(",
+            "id": "2",
+            "stars": 1,
+            "user_id": "2",
+          },
+          Object {
+            "detail": "It was fine.",
+            "id": "3",
+            "stars": 4,
+            "user_id": "3",
+          },
+        ],
+        "website": "http://www.PipsOriginal.com",
+      }
+    `);
+  });
 });
