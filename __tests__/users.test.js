@@ -32,9 +32,6 @@ describe('user routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
-  afterAll(() => {
-    pool.end();
-  });
 
   it('creates a new user', async () => {
     const res = await request(app).post('/api/v1/users').send(mockUser);
@@ -103,5 +100,8 @@ describe('user routes', () => {
     const [agent] = await registerAndLogin();
     const resp = await agent.delete('/api/v1/users/sessions');
     expect(resp.status).toBe(204);
+  });
+  afterAll(() => {
+    pool.end();
   });
 });
