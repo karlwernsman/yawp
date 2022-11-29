@@ -14,15 +14,8 @@ const fakeUser = {
 
 const registerAndLogin = async (userProps = {}) => {
   const password = userProps.password ?? fakeUser.password;
-
-  // Create an "agent" that gives us the ability
-  // to store cookies between requests in a test
   const agent = request.agent(app);
-
-  // Create a user to sign in with
   const user = await UserService.create({ ...fakeUser, ...userProps });
-
-  // ...then sign in
   const { email } = user;
   await agent.post('/api/v1/users/sessions').send({ email, password });
   return [agent, user];
@@ -112,26 +105,28 @@ describe('restaurant routes', () => {
 
   it('POST /api/v1/restaurants/:id/reviews should create a new review when logged in', async () => {
     const [agent] = await registerAndLogin();
-    const resp = await agent
+    const res = await agent
       .post('/api/v1/restaurants/1/reviews')
       .send({ detail: 'This is a new review!!!' });
-    expect(resp.status).toBe(200);
-    expect(resp.body).toMatchInlineSnapshot(`
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchInlineSnapshot(`
       Object {
         "detail": "This is a new review!!!",
         "id": "4",
         "stars": null,
-        "user_id": null,
+        "user_id": "4",
       }
     `);
   });
   it('DELETE /api/v1/reviews/:id should delete a review', async () => {
     const [agent] = await registerAndLogin();
-    const res = await agent.delete('/api/v1/reviews/1');
+    await agent
+      .post('/api/v1/restaurants/4/reviews')
+      .send({ detail: 'this is a new review', stars: 3 });
+    const res = await agent
+      .delete('/api/v1/reviews/4')
+      .send({ message: 'Review was deleted!' });
     expect(res.status).toBe(200);
-
-    const reviewRes = await agent.get('/api/v1/reviews/1');
-    expect(reviewRes.status).toBe(404);
   });
   afterAll(() => {
     pool.end();
