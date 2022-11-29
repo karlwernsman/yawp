@@ -33,7 +33,7 @@ describe('restaurant routes', () => {
     return setup(pool);
   });
 
-  it('shows a list of restaurants', async () => {
+  it('GET shows a list of restaurants', async () => {
     const res = await request(app).get('/api/v1/restaurants');
     expect(res.status).toBe(200);
     expect(res.body.length).toBe(4);
@@ -124,6 +124,14 @@ describe('restaurant routes', () => {
         "user_id": null,
       }
     `);
+  });
+  it('DELETE /api/v1/reviews/:id should delete a review', async () => {
+    const [agent] = await registerAndLogin();
+    const res = await agent.delete('/api/v1/reviews/1');
+    expect(res.status).toBe(200);
+
+    const reviewRes = await agent.get('/api/v1/reviews/1');
+    expect(reviewRes.status).toBe(404);
   });
   afterAll(() => {
     pool.end();
