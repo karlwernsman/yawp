@@ -127,6 +127,9 @@ describe('restaurant routes', () => {
       .delete('/api/v1/reviews/4')
       .send({ message: 'Review was deleted!' });
     expect(res.status).toBe(200);
+
+    const deleteCheck = await agent.get('/api/v1/reviews/4');
+    expect(deleteCheck.status).toBe(404);
   });
   afterAll(() => {
     pool.end();
