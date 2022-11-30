@@ -32,9 +32,6 @@ describe('user routes', () => {
   beforeEach(() => {
     return setup(pool);
   });
-  afterAll(() => {
-    pool.end();
-  });
 
   it('creates a new user', async () => {
     const res = await request(app).post('/api/v1/users').send(mockUser);
@@ -103,5 +100,30 @@ describe('user routes', () => {
     const [agent] = await registerAndLogin();
     const resp = await agent.delete('/api/v1/users/sessions');
     expect(resp.status).toBe(204);
+  });
+
+  it('GET api/v1/users/:id should return the user with nested reviews', async () => {
+    const res = await request(app).get('/api/v1/users/1');
+    expect(res.status).toBe(200);
+    expect(res.body).toMatchInlineSnapshot(`
+      Object {
+        "email": "alvin@example.com",
+        "firstName": "Alvin",
+        "id": "1",
+        "lastName": "A",
+        "reviews": Array [
+          Object {
+            "detail": "Best restaurant ever!",
+            "id": "1",
+            "restaurant_id": "1",
+            "stars": 5,
+            "user_id": "1",
+          },
+        ],
+      }
+    `);
+  });
+  afterAll(() => {
+    pool.end();
   });
 });
