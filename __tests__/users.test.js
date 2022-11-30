@@ -115,6 +115,7 @@ describe('user routes', () => {
           Object {
             "detail": "Best restaurant ever!",
             "id": "1",
+            "restaurant_id": "1",
             "stars": 5,
             "user_id": "1",
           },
